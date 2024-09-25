@@ -1,0 +1,11 @@
+.profile-container-fluid{
+    height: 100vh;
+    width: 100vw;
+}
+.profile-container{
+    margin:40px;
+}
+
+.address-container{
+   margin-bottom: 10px;
+}

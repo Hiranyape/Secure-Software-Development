@@ -5,7 +5,7 @@ import { AddressComponent } from "../components/Address-comp";
 import { CartItem } from "../components/Cart-comp";
 import { WishItem } from "../components/Wishlist-comp";
 import { OrderItem } from "../components/Order-comp";
-
+import "./style/Profile.css"; 
 //load Shopping profile
 
 const Profile = () => {
@@ -205,12 +205,12 @@ const Profile = () => {
 
     }
 
-
-    
     const shoppingProfile = () => {
-        return (<div className="container">
-            {handleAddress()}
-
+        return (
+            <div className="profile-container">
+            <div className="address-container">
+                {handleAddress()} 
+            </div>
             <div className="row bg-white" style={{ borderTopLeftRadius:10, borderTopRightRadius: 10, padding: 10 }}>
                 <div>
                     <p className="ml-3 my-2 mb-5" style={{color: '#4179CF', fontSize: '2rem'}}> Shopping Cart</p>
@@ -249,7 +249,7 @@ const Profile = () => {
     }
   
  
-    return <div className="container-fluid">
+    return <div className="profile-container-fluid">
             {shoppingProfile()}  
         </div>
 

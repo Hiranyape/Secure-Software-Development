@@ -15,4 +15,7 @@ module.exports = {
   MSG_QUEUE_URL: process.env.MSG_QUEUE_URL,
   CUSTOMER_SERVICE: "customer_service",
   SHOPPING_SERVICE: "shopping_service",
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
 };

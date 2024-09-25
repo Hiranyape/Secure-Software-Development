@@ -1,6 +1,9 @@
 const CustomerService = require('../services/customer-service');
 const  UserAuth = require('./middlewares/auth');
 const { SubscribeMessage } = require('../utils');
+const axios = require('axios');
+const {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI} = require('../config')
+
 
 
 module.exports = (app, channel) => {
@@ -28,6 +31,52 @@ module.exports = (app, channel) => {
 
     });
 
+    app.post('/google-login', async (req, res, next) => {
+        const { authorizationCode } = req.body; 
+        console.log(`authorizationCode ${authorizationCode}`)
+        try {
+            const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+                code: authorizationCode,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: 'http://localhost/auth/google/callback', 
+                grant_type: 'authorization_code',
+            });
+            
+            const { access_token } = tokenResponse.data;
+            console.log(`access_token: ${access_token}`)
+            
+            const data = await service.GoogleSignIn(access_token);
+            res.json(data); 
+        } catch (error) {
+            console.error("Error during Google login:", error);
+            res.status(500).json({ message: "Google login failed" });
+        }
+    });
+
+    app.post('/google-signup', async (req, res, next) => {
+        const { authorizationCode } = req.body; 
+        console.log(`authorizationCode ${authorizationCode}`)
+        try {
+            const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+                code: authorizationCode,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: 'http://localhost/auth/google/callback', 
+                grant_type: 'authorization_code',
+            });
+            
+            const { access_token } = tokenResponse.data;
+            console.log(`access_token: ${access_token}`)
+            
+            const data = await service.GoogleSignUp(access_token);
+            res.json(data); 
+        } catch (error) {
+            console.error("Error during Google login:", error);
+            res.status(500).json({ message: "Google login failed" });
+        }
+    });
+    
     app.post('/address', UserAuth, async (req,res,next) => {
         
         const { _id } = req.user;
@@ -66,4 +115,25 @@ module.exports = (app, channel) => {
     app.get('/whoami', (req,res,next) => {
         return res.status(200).json({msg: '/customer : I am Customer Service'})
     })
+
+    app.get('/auth/google/callback', async (req, res) => {
+        const { code } = req.query;
+    
+        try {
+            // Exchange the authorization code for an access token
+            const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+                code,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+                grant_type: 'authorization_code'
+            });
+    
+            const { access_token } = tokenResponse.data;
+            res.redirect(`/google-success?accessToken=${access_token}`);
+        } catch (error) {
+            console.error('Error exchanging code for token:', error);
+            res.status(500).json({ message: 'Failed to exchange code for access token' });
+        }
+    });
 }

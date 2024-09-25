@@ -1,20 +1,59 @@
-/* Signup.css */
+/* Container for login page, image and form side by side */
 
-/* Signup container */
-.signup-container {
+.container{
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100vw;
+
+}
+.login-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 90vw;
 }
 
-/* Signup form styling */
-.signup-form {
-    background-color: black;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
+/* Image container takes 70% of the width */
+.image-container {
+    width: 70vw; /* Fixed width of 70% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+    
+}
+
+/* Image styling, set height to match the form */
+.side-image {
+    width: 100%;
+    height: 87%; 
+    object-fit: cover; 
+    border-radius: 10px 0px 0px 10px;
+
+}
+
+/* Login container takes 30% of the width */
+.login-container {
+    width: 30vw; 
+    height: 100%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Login form styling */
+.login-form {
+    background-color: white;
+    color: black;
+    padding: 30px;
+    border-radius: 0 10px 10px 0;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Full width of the container */
+    height: auto; /* Allow the form to adjust based on content */
 }
 
 /* Form group styling */
@@ -22,17 +61,82 @@
     margin-bottom: 20px;
 }
 
-/* Button styling */
-.signup-btn {
-    width: 100px;
-    background-color: yellow;
-    border-color: yellow;
-    color: black;
+/* Input field styling */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
 }
 
-.back-btn {
-    width: 150px;
+/* Button styling */
+.login-btn, .signup-btn {
+    width: 100%; /* Make the button width match the input fields */
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.login-btn {
+    background-color: black;
+    border-color: black;
+    color: white;
+}
+
+.signup-btn {
     background-color: black;
     border-color: black;
     color: yellow;
+}
+
+/* Google sign-in button */
+.google-btn {
+    width: 100%; /* Ensures the Google login button matches the input field width */
+    padding: 10px;
+    background-color: white;
+    color: black;
+    margin-top: 10px;
+}
+
+.text-left {
+    text-align: left;
+}
+
+/* Container for lines and text */
+.line-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Styling for horizontal lines */
+.line {
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 0 10px;
+}
+
+/* Styling for the text between the lines */
+.text {
+    white-space: nowrap;
+    font-size: 14px;
+    color: #555;
+}
+
+.signup-link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.signup-link:hover {
+    color: #db4437;
+}
+
+/* Login button hover effect */
+.login-btn:hover {
+    background-color: gray;
+    border-color: gray;
 }

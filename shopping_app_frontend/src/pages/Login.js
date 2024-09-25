@@ -1,101 +1,21 @@
-// import React, { useReducer, useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { onSignup, onLogin, onViewProfile  } from '../store/actions'
-// import { AddressComponent } from "../components/Address-comp";
-// import { Profile } from "./Profile";
-
-// //load Shopping profile
-// const Login = () => {
-
-//     const { user, profile } = useSelector(state => state.userReducer);
-//     const dispatch = useDispatch();
-
-//     const { id, token } = user;
-
-//     const { address, whishlist, orders } = profile;
-
-//     const [isSignup, setSignup] = useState(false);
-
-//     const [ email, setEmail ] = useState('');
-//     const [ password, setPassword ] = useState('');
-
-//     useEffect(() => {
-//         if(token){
-//             dispatch(onViewProfile())
-//         }
-//     },[token])
-
-//     const userSignup = () => {
-//         //call Signup
-//     }
-
-//     const userLogin = () => {
-//         dispatch(onLogin({email, password}));
-//     }
-
-//     const loginForm = () => {
-//         return (<div className="row bg-secondary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' ,height: '30rem'}}>
-//                 <div className="col col-sm-5 col-md-4 col-lg-3 col-xl-2">
-//                     <form>
-//                         <div className="from-group" controlId="formBasicEmail">
-//                             <label>Email address</label>
-//                             <input className="form-control" type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
-//                         </div>
-//                         <div className="from-group" controlId="formBasicPassword">
-//                             <label>Password</label>
-//                             <input className="form-control" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-//                         </div>
-//                         <div className="row m-2 float-right">
-//                             <button  className="btn btn-primary mr-2 " onClick={() => userLogin()} type="button">
-//                                 Login
-//                             </button>
-//                             <button className="btn btn-primary" type="button">
-//                                 Signup
-//                             </button>
-
-//                         </div>
-//                     </form>
-//                 </div>
-//         </div> );
-
-//     }
-
-//     const signUpForm = () => {
-//         return <div className="row">
-//             <h1> Signup </h1>
-//         </div>
-//     }
-
-//     if(token){
-//         return <Profile />
-//     }else{
-
-//         return <div className="container-fluid">
-//             {isSignup ? signUpForm() : loginForm()}
-//         </div>
-
-//     }
-
-// }
-
-// export { Login };
-
-import React, { useReducer, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { onSignup, onLogin, onViewProfile } from "../store/actions";
+import { onSignup, onLogin, onViewProfile, onGoogleSignIn } from "../store/actions"; 
 import { AddressComponent } from "../components/Address-comp";
+import { useLocation, useHistory } from "react-router-dom"; 
 import { Profile } from "./Profile";
-import "./style/Login.css"; // Import CSS file for styling
-import "./style/SignUp.css"; // Import CSS file for styling
+import "./style/Login.css"; 
 
-// Load Shopping profile
+
+
 const Login = () => {
   const { user, profile } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
 
   const { id, token } = user;
+  const history = useHistory(); 
 
-  const { address, whishlist, orders } = profile;
+  const { address, wishlist, orders } = profile; // Fixed 'wishlist' typo
 
   const [isSignup, setSignup] = useState(false);
 
@@ -107,25 +27,42 @@ const Login = () => {
     if (token) {
       dispatch(onViewProfile());
     }
-  }, [token]);
+  }, [token, dispatch]);
 
   const userSignup = () => {
     dispatch(onSignup({ email, password, telephone }));
   };
   const userLogin = () => {
     dispatch(onLogin({ email, password }));
+    history.push("/profile");
+  };
+
+  // Google Sign-In handler
+  const handleGoogleSignIn = () => {
+    dispatch(onGoogleSignIn()); 
   };
 
   const loginForm = () => {
     return (
+      <div className="container">
+      <div className="login-page-container">
+       <div className="image-container">
+        <img
+          src="https://www.greenqueen.com.hk/wp-content/uploads/2021/07/Rental-Fashion-Causes-More-Emissions-Than-Throwing-Clothes-Away.jpg"
+          alt="Login visual"
+          className="side-image"
+        />
+      </div>
       <div className="login-container">
         <form className="login-form">
+        <h2 className="text-left">Login</h2>
+        <p className="text-left">Welcome back! Please login to your account.</p>
           <div className="form-group">
             <label>Email address</label>
             <input
               className="form-control"
               type="email"
-              placeholder="Enter email"
+              placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
@@ -146,15 +83,38 @@ const Login = () => {
             >
               Login
             </button>
+          </div>
+            <p className="text-left">
+              Doesn't have an account yet?{" "}
+              <a href="/signup" className="signup-link">
+                Sign Up
+              </a>
+            </p>
+              <div className="line-container">
+                <hr className="line" />
+                <span className="text">or login with</span>
+                <hr className="line" />
+              </div>
+             
+          <div className="form-group">
             <button
-              className="btn btn-primary signup-btn"
-              onClick={() => setSignup(true)}
+              className="btn btn-danger google-btn"
+              onClick={() => handleGoogleSignIn()}
               type="button"
             >
-              Signup
+              {/* Just the "G" logo and text */}
+              <img
+                src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+                alt="Google G logo"
+                style={{ width: '30px', marginRight: '10px' }} // Adjust image size and margin
+              />
+              Login with Google
             </button>
-          </div>
+        </div>
+
         </form>
+      </div>
+      </div>
       </div>
     );
   };
@@ -162,7 +122,7 @@ const Login = () => {
   const signUpForm = () => {
     return (
       <div
-        className="signup-container" // Updated class name
+        className="signup-container"
         style={{
           display: "flex",
           justifyContent: "center",
@@ -171,17 +131,16 @@ const Login = () => {
         }}
       >
         <form className="signup-form">
-          {" "}
-          <div className="from-group" controlId="formBasicEmail">
+          <div className="from-group">
             <label>Email address</label>
             <input
               className="form-control"
               type="email"
-              placeholder="Enter email"
+              placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="from-group" controlId="formBasicPassword">
+          <div className="from-group">
             <label>Password</label>
             <input
               className="form-control"
@@ -190,7 +149,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="from-group" controlId="formBasicTelephone">
+          <div className="from-group">
             <label>Telephone</label>
             <input
               className="form-control"
@@ -201,15 +160,14 @@ const Login = () => {
           </div>
           <div className="row m-2 float-right">
             <button
-              className="btn btn-primary mr-2 mr-2 signup-btn" // Updated class name"
+              className="btn btn-primary mr-2 signup-btn"
               onClick={() => userSignup()}
               type="button"
             >
               Signup
             </button>
-
             <button
-              className="btn btn-primary login-btn" // Updated class name
+              className="btn btn-primary login-btn"
               onClick={() => setSignup(false)}
               type="button"
             >
@@ -218,18 +176,11 @@ const Login = () => {
           </div>
         </form>
       </div>
+      
     );
   };
 
-  if (token) {
-    return <Profile />;
-  } else {
-    return (
-      <div className="container-fluid">
-        {isSignup ? signUpForm() : loginForm()}
-      </div>
-    );
-  }
+  return loginForm();
 };
 
 export { Login };

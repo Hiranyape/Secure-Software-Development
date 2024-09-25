@@ -4,7 +4,7 @@ const { CustomerModel, AddressModel } = require('../models');
 //Dealing with data base operations
 class CustomerRepository {
 
-    async CreateCustomer({ email, password, phone, salt }){
+    async CreateCustomer({ email, password=null, phone=null, salt=null }){
 
         const customer = new CustomerModel({
             email,

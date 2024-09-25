@@ -1,7 +1,7 @@
 const { CustomerRepository } = require("../database");
 const { FormateData, GeneratePassword, GenerateSalt, GenerateSignature, ValidatePassword } = require('../utils');
+const axios = require("axios");
 
-// All Business logic will be here
 class CustomerService {
 
     constructor(){
@@ -11,9 +11,7 @@ class CustomerService {
     async SignIn(userInputs){
 
         const { email, password } = userInputs;
-        
         const existingCustomer = await this.repository.FindCustomer({ email});
-
         if(existingCustomer){
             
             const validPassword = await ValidatePassword(password, existingCustomer.password, existingCustomer.salt);
@@ -27,27 +25,72 @@ class CustomerService {
     }
 
     async SignUp(userInputs){
-        
         const { email, password, phone } = userInputs;
-        
-        // create salt
         let salt = await GenerateSalt();
-        
         let userPassword = await GeneratePassword(password, salt);
-        
         const existingCustomer = await this.repository.CreateCustomer({ email, password: userPassword, phone, salt});
-        
         const token = await GenerateSignature({ email: email, _id: existingCustomer._id});
         return FormateData({id: existingCustomer._id, token });
-
     }
 
-    async AddNewAddress(_id,userInputs){
-        
-        const { street, postalCode, city,country} = userInputs;
-    
-        const addressResult = await this.repository.CreateAddress({ _id, street, postalCode, city,country})
+    async GoogleSignIn(googleAccessToken) {
+        try {
+            console.log(`googleAccessToken: ${googleAccessToken}`)
+            const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+                headers: {
+                    "Authorization": `Bearer ${googleAccessToken}`
+                }
+            });
 
+            const { email } = response.data;
+    
+            const existingCustomer = await this.repository.FindCustomer({ email });
+    
+            if (!existingCustomer) {
+                return FormateData("User does not exist. Please sign up first.");
+            }
+            const token = await GenerateSignature({ email: existingCustomer.email, _id: existingCustomer._id });
+            console.log(`token: ${token}`)
+            console.log(`existingCustomer: ${existingCustomer}`)
+            return FormateData({ id: existingCustomer._id, token });
+        } catch (error) {
+            console.error("Error in Google Sign-In:", error);
+            return FormateData(null, "Error during Google Sign-In");
+        }
+    }
+
+    async GoogleSignUp(googleAccessToken) {
+        try {
+            const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+                headers: {
+                    "Authorization": `Bearer ${googleAccessToken}`
+                }
+            });
+            const { email } = response.data;
+            const existingCustomer = await this.repository.FindCustomer({ email });
+
+            if (existingCustomer) {
+                return FormateData("User already exists. Please sign in.");
+            }
+            const newCustomer = await this.repository.CreateCustomer({
+                email,
+                phone: ''  ,
+                password: '',
+                salt: '',
+            });
+            
+            const token = await GenerateSignature({ email: newCustomer.email, _id: newCustomer._id });
+            return FormateData({ id: newCustomer._id, token });
+    
+        } catch (error) {
+            console.error("Error in Google Sign-Up:", error);
+            return FormateData(null);
+        }
+    }
+    
+    async AddNewAddress(_id,userInputs){
+        const { street, postalCode, city,country} = userInputs;
+        const addressResult = await this.repository.CreateAddress({ _id, street, postalCode, city,country})
         return FormateData(addressResult);
     }
 
@@ -62,7 +105,6 @@ class CustomerService {
         const existingCustomer = await this.repository.FindCustomerById({id});
 
         if(existingCustomer){
-            // const orders = await this.shopingRepository.Orders(id);
            return FormateData(existingCustomer);
         }       
         return FormateData({ msg: 'Error'});

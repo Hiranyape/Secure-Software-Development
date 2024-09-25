@@ -13,20 +13,22 @@ export const Header = () => {
             return cart.length;
         }
         return 0;
-    };
+    }
+
+    console.log(`token in the header: ${token}`)
 
     const loginProfile = () => {
         if(token){
             return (
                 <ul className="navbar-nav">
                     <li className="nav-item" style={{ backgroundColor: '#97C885', width: 90, borderRadius: 50}}>
-                        <Link to="/login" href="#" className="btn-lg nav-link text-white">
+                        <Link to="/profile" href="#" className="btn-lg nav-link text-white">
                             <i className="fas fa-shopping-cart"></i>
                             <span className="ml-3" style={{ fontSize: '1.1rem', fontWeight: 'bold'}}>{cartCount()}</span>
                         </Link>
                     </li> 
                     <li className="nav-item">
-                        <Link to="/login" className="btn-lg nav-link text-white">
+                        <Link to="/profile" className="btn-lg nav-link text-white">
                             <i className="fas fa-user"></i>
                             <span className="ml-1"></span>
                         </Link>

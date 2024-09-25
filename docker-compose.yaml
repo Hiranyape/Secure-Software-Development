@@ -71,6 +71,9 @@ services:
       - MSG_QUEUE_URL=amqps://hmymaonx:eQw67COvm6yBLbc0-ls4vHwjHfiYKEdZ@lionfish.rmq.cloudamqp.com/hmymaonx
       - EXCHANGE_NAME=ONLINE_STORE
       - PORT=8001
+      - GOOGLE_CLIENT_ID=382807774945-2irksaaiaqr613v7mlnsoe3sien9vds3.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - GOOGLE_REDIRECT_URI=http://localhost/auth/google/callback
 
   frontend:
     build:
